@@ -9,7 +9,7 @@ import os
 import tmdbsimple as tmdb
 import numpy as np
 import random
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import seaborn as sns
 import pickle
 
@@ -67,7 +67,7 @@ for i in range(len(top20_movies)):
 
 
 ########
-# Pull result from the top 50 pages
+# Pull result from the top 50 pages -- each page has 20 movies so in total 1000 movies
 # It uses python pickle package to organize serialization
 # Some of the code below will store the data into python "pickle" files
 # so that it can be ready directly from memory, as opposed to being downloaded every time.
@@ -90,6 +90,35 @@ top1000_movies = []
 f3=open('movie_list.pck1','rb')
 top1000_movies = pickle.load(f3)
 f3.close()
+
+########
+# Pairwise analysis of Movie Genres
+# Which genres co-occur
+########
+# Make a function that takes a list and makes all possible pairs from it
+########
+def list2pairs(l):
+    # itertools.combinations(l,2) makes all pairs of length 2 from list l
+    pairs = list(itertools.combinations(l,2))
+    # one item pairs, as duplicate pairs are not accounted for by itertools
+    for i in l:
+        pairs.append([i,i])
+    return pairs
+
+# Get all genre lists pairs from all movies
+allPairs = []
+for movie in top1000_movies:
+    allPairs.extend(list2pairs(movie['genre_ids']))
+# Unique list of all pairs of genres
+nr_ids = np.unique(allPairs)
+##  Explaination of numpy zeros ###
+# >>> np.zeros((2, 1))            #
+#       array([[ 0.],             #
+#              [ 0.]])            #  
+##                              ###
+visGrid = np.zeros((len(nr_ids),len(nr_ids)))
+for p in allPairs:
+    
 
 
 # These functions take in a string movie name i.e. like "The Matrix" or "Interstellar"
